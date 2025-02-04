@@ -7,9 +7,14 @@ import (
 	"github.com/Kaushik1766/chain-upi-gin/db"
 	"github.com/Kaushik1766/chain-upi-gin/routes"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Cant find .env")
+	}
 	db, err := db.InitDB()
 	// db.AutoMigrate(&models.User{}, &models.Wallet{})
 	if db != nil {
