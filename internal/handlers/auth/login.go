@@ -8,6 +8,7 @@ import (
 	"github.com/Kaushik1766/chain-upi-gin/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -32,6 +33,11 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 		result := db.First(&user)
 		if result.Error != nil {
 			fmt.Println(result.Error.Error())
+			ctx.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+		err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(reqBody.Password))
+		if err != nil {
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
