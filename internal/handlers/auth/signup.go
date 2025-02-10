@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/Kaushik1766/chain-upi-gin/db"
 	"github.com/Kaushik1766/chain-upi-gin/internal/models"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 type signupForm struct {
@@ -17,7 +17,7 @@ type signupForm struct {
 	Email    string `json:"email" binding:"required"`
 }
 
-func Signup(db *gorm.DB) gin.HandlerFunc {
+func Signup() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var reqBody signupForm
 		// _secret := []byte(os.Getenv("SECRET"))
@@ -43,12 +43,10 @@ func Signup(db *gorm.DB) gin.HandlerFunc {
 			})
 			return
 		}
-
-		result := db.Create(&user)
-		// fmt.Println(user.UID)
-		if result.Error != nil {
-			if strings.Contains(result.Error.Error(), "23505") {
-				fmt.Println(result.Error.Error())
+		err = db.CreateUser(&user)
+		if err != nil {
+			if strings.Contains(err.Error(), "23505") {
+				fmt.Println(err.Error())
 				ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 					"error": "email address in use",
 				})
@@ -60,6 +58,21 @@ func Signup(db *gorm.DB) gin.HandlerFunc {
 				return
 			}
 		}
+		// fmt.Println(user.UID)
+		// if result.Error != nil {
+		// 	if strings.Contains(result.Error.Error(), "23505") {
+		// 		fmt.Println(result.Error.Error())
+		// 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+		// 			"error": "email address in use",
+		// 		})
+		// 		return
+		// 	} else {
+		// 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+		// 			"error": "Internal server error",
+		// 		})
+		// 		return
+		// 	}
+		// }
 		ctx.JSON(http.StatusAccepted, gin.H{
 			"success": "Account created Successfully, Login to continue.",
 		})

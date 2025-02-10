@@ -8,7 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func ValidateJwt(jwtToken string) (*jwt.Token, error) {
+func ValidateJwt(jwtToken string) (*models.JwtClaims, error) {
 	_secret := []byte(os.Getenv("SECRET"))
 	token, err := jwt.ParseWithClaims(jwtToken, &models.JwtClaims{}, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -19,6 +19,9 @@ func ValidateJwt(jwtToken string) (*jwt.Token, error) {
 	if err != nil {
 		return nil, err
 	}
+	if claims, ok := token.Claims.(*models.JwtClaims); ok && token.Valid {
+		return claims, nil
+	}
 	// fmt.Println(token)
-	return token, nil
+	return nil, fmt.Errorf("INVALID TOKEN")
 }

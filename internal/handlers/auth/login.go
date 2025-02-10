@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/Kaushik1766/chain-upi-gin/db"
 	"github.com/Kaushik1766/chain-upi-gin/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 type loginForm struct {
@@ -17,7 +17,7 @@ type loginForm struct {
 	Email    string `json:"email" binding:"required"`
 }
 
-func Login(db *gorm.DB) gin.HandlerFunc {
+func Login() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var reqBody loginForm
 		_secret := []byte(os.Getenv("SECRET"))
@@ -27,16 +27,14 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 				"error": "Invalid Data",
 			})
 		}
-		user := models.User{
-			Email: reqBody.Email,
-		}
-		result := db.First(&user)
-		if result.Error != nil {
-			fmt.Println(result.Error.Error())
+		user, err := db.GetUser(reqBody.Email)
+		if err != nil {
+			fmt.Println(err.Error())
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
-		err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(reqBody.Password))
+
+		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(reqBody.Password))
 		if err != nil {
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return

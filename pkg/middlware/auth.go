@@ -11,6 +11,10 @@ import (
 func Authenticate() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token := ctx.Request.Header.Get("Authorization")
+		if len(token) <= 7 {
+			ctx.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
 		token = token[7:]
 		parsedToken, err := utils.ValidateJwt(token)
 		if err != nil {
@@ -20,7 +24,7 @@ func Authenticate() gin.HandlerFunc {
 			})
 			return
 		}
-		fmt.Println(parsedToken.Claims)
+		ctx.Set("uid", parsedToken.UID)
 		ctx.Next()
 	}
 }
