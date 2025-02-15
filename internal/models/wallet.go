@@ -9,4 +9,5 @@ type Wallet struct {
 	Address    string    `gorm:"not null;"`
 	PrivateKey string    `gorm:"not null;"`
 	IsPrimary  bool      `gorm:"default:false"`
+	Chain      string    `gorm:"not null;type:varchar(10)"`
 }

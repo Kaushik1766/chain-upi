@@ -5,10 +5,17 @@ go 1.23.3
 require github.com/google/uuid v1.6.0
 
 require (
+	github.com/btcsuite/btcd/btcec/v2 v2.3.4 // indirect
+	github.com/btcsuite/btcutil v1.0.3-0.20201208143702-a53e38424cce // indirect
+	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 // indirect
+	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.14.3 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgproto3/v2 v2.3.3 // indirect
+	github.com/okx/go-wallet-sdk/coins/tron v0.0.0-20241112025950-be50d8cc4851 // indirect
+	github.com/okx/go-wallet-sdk/crypto v0.0.2 // indirect
+	github.com/okx/go-wallet-sdk/util v0.0.2 // indirect
 )
 
 require (
@@ -47,7 +54,7 @@ require (
 	golang.org/x/sync v0.11.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
-	google.golang.org/protobuf v1.36.4 // indirect
+	google.golang.org/protobuf v1.36.5 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/postgres v1.5.11 // indirect
 	gorm.io/gorm v1.25.12 // indirect
