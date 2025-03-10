@@ -1,0 +1,32 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "profile",
+    "collectionId": "f1b3ec2f-ec06-4b75-a4b2-7a8e19387054",
+    "dateExported": "2025-03-10T18:31:25.310Z",
+    "version": "1.2",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "d82cfa65-2e10-4ba8-bb1f-ae226117410c",
+            "colId": "f1b3ec2f-ec06-4b75-a4b2-7a8e19387054",
+            "containerId": "",
+            "name": "changePassword",
+            "url": "http://localhost:3000/api/profile/changePassword",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2025-03-10T18:04:26.848Z",
+            "modified": "2025-03-10T18:06:17.434Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"password\":\"1234\"\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImthdXNoaWtzYWhhMDA0QGdtYWlsLmNvbSIsIk5hbWUiOiJLYXVzaGlrIiwiVUlEIjoiOTdiYmE0NWYtOWFlNy00MGE3LTgxZjgtZmIwZWM1ZTI5ZWVmIiwiVXBpSGFuZGxlIjoia2F1c2hpa3NhaGEwMDQifQ.uOaRlAOM4wzdvFr8Kk_SYMDQXWJJI64AC2p5FCETwSE"
+            }
+        }
+    ],
+    "ref": "V5KBizGImvTxqHKgHFT88pXv2lqKH3-PvI7dUZKZSrURArIj5aIkVupprOtpbZxrIdvx4tb3L8KdaTV7HIqGew"
+}

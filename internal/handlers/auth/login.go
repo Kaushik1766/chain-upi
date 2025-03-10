@@ -41,9 +41,10 @@ func Login() gin.HandlerFunc {
 		}
 		// fmt.Println(user)
 		unsignedToken := jwt.NewWithClaims(jwt.SigningMethodHS256, models.JwtClaims{
-			Email: user.Email,
-			Name:  user.Name,
-			UID:   user.UID.String(),
+			Email:     user.Email,
+			Name:      user.Name,
+			UID:       user.UID.String(),
+			UpiHandle: user.UpiHandle,
 		})
 		token, err := unsignedToken.SignedString(_secret)
 		if err != nil {

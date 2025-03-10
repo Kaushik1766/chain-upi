@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/Kaushik1766/chain-upi-gin/db"
@@ -18,10 +19,19 @@ type WalletForm struct {
 func AddWallet() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var form WalletForm
-		if err := ctx.ShouldBindJSON(&form); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
+		// if err := ctx.ShouldBindJSON(&form); err != nil {
+		// 	ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
+		// 	fmt.Println("Controller Error: ", err.Error())
+		// 	return
+		// }
+		body, exists := ctx.Get("wallet")
+		if !exists {
+			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
+
+		form = body.(WalletForm)
+		fmt.Println("Form: ", form)
 
 		uid, ok := ctx.Get("uid")
 		if !ok {

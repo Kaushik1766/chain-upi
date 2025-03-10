@@ -1,0 +1,32 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "wallet",
+    "collectionId": "7b6e20bf-e664-440f-bc3c-1e2f244e0c3f",
+    "dateExported": "2025-03-10T18:31:35.772Z",
+    "version": "1.2",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "7f07c12e-486e-489f-bd15-fd0935816c85",
+            "colId": "7b6e20bf-e664-440f-bc3c-1e2f244e0c3f",
+            "containerId": "",
+            "name": "addWallet",
+            "url": "http://localhost:3000/api/wallet/addWallet",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2025-03-10T18:07:03.865Z",
+            "modified": "2025-03-10T18:21:27.678Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"address\":\"TCZVZUQpj1jB1YEoCMmhdAeNbCenkisrTq\",\n  \"privateKey\":\"asdfasdf\",\n  \"chain\":\"trx\"\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImthdXNoaWtzYWhhMDA0QGdtYWlsLmNvbSIsIk5hbWUiOiJLYXVzaGlrIiwiVUlEIjoiOTdiYmE0NWYtOWFlNy00MGE3LTgxZjgtZmIwZWM1ZTI5ZWVmIiwiVXBpSGFuZGxlIjoia2F1c2hpa3NhaGEwMDQifQ.uOaRlAOM4wzdvFr8Kk_SYMDQXWJJI64AC2p5FCETwSE"
+            }
+        }
+    ],
+    "ref": "oY9AFMQd7z-zzTGkPn4jcck0IuW3ah0LwtEOVT4Yovr0t7B5-nmuj1mRQya0JOPDnLcRwTFOBMJBwPh6cAasJA"
+}

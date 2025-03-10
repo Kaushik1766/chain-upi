@@ -18,6 +18,13 @@ func InitDB() error {
 		return err
 	}
 	DB = db
+
+	// reset db
+	// DB.Delete(&models.User{}, "1=1")
+	// DB.Delete(&models.Wallet{}, "1=1")
+
+	// migrate if you change models
+	// DB.AutoMigrate(&models.User{}, &models.Wallet{})
 	fmt.Println("Connected to db.")
 	return nil
 }
