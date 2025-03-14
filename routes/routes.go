@@ -25,6 +25,7 @@ func CreateRoutes(r *gin.RouterGroup) {
 
 	transactionGroup := r.Group("/transaction", middlware.Authenticate())
 	transactionGroup.POST("/sendToUpi", transaction.SendToUpi())
+	transactionGroup.GET("/history", transaction.TransactionHistory())
 	// transactionGroup.POST("/sendToAddress", transaction.CreateTransaction())
 
 }
