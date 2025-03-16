@@ -21,16 +21,21 @@ func CreateRoutes(r *gin.RouterGroup) {
 
 	walletGroup := r.Group("/wallet", middlware.Authenticate())
 	walletGroup.POST("/addWallet", middlware.ValidateWallet(), wallet.AddWallet())
+	walletGroup.POST("/setPrimary", wallet.SetPrimary())
 
 	transactionGroup := r.Group("/transaction", middlware.Authenticate())
 	transactionGroup.POST("/sendToUpi", transaction.SendToUpi())
+	transactionGroup.GET("/historyByUpi", transaction.TransactionHistory())
+	transactionGroup.GET("/historyByAddress", transaction.TransactionHistory())
+
 	// transactionGroup.POST("/sendToAddress", transaction.CreateTransaction())
 
 }
 
 // type testForm struct {
-// 	Address string `json:"address" binding:"required"`
+// 	// Address string `json:"address" binding:"required"`
 // 	// PrivateKey string `json:"privateKey" binding:"required"`
+// 	UPI   string `json:"upi" binding:"required"`
 // 	Chain string `json:"chain" binding:"required"`
 // }
 
@@ -41,7 +46,7 @@ func CreateRoutes(r *gin.RouterGroup) {
 // 			ctx.JSON(400, gin.H{"error": "Invalid data"})
 // 			return
 // 		}
-// 		_, err := db.GetWalletByUpiHandle(form.Address, form.Chain)
+// 		_, err := db.GetPrimaryWalletByUpiHandle(form.UPI, form.Chain)
 // 		if err != nil {
 // 			ctx.JSON(400, gin.H{"error": "Invalid data2"})
 // 			return

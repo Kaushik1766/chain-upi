@@ -1,6 +1,8 @@
 package trx
 
-func SendTrx(sender string, privateKey string, receiver string, amount float64) error {
+import "github.com/Kaushik1766/chain-upi-gin/internal/models"
+
+func SendTrx(sender *models.Wallet, receiver string, amount float64) error {
 
 	return nil
 }
