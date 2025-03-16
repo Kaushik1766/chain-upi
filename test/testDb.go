@@ -27,7 +27,7 @@ func main() {
 	// 	return
 	// }
 
-	// wallets, err := db.GetPrimaryWalletsByUpiHandle("kaushiksaha004")
+	wallets, err := db.GetPrimaryWalletsByUpiHandle("kaushiksaha004")
 
 	// err = db.SetPrimary("TCZVZUQpj1jB1YEoCMmhdAeNbCenkisrTq", parsedId, "trx")
 	// wallets, err := db.GetWalletsByChain("kaushiksaha004", "trx")
@@ -38,14 +38,14 @@ func main() {
 	// 	fmt.Println(val.ToString())
 	// }
 
-	wallet, err := db.GetPrimaryWalletByUpiHandle("kaushiksaha004", "trx")
+	// wallet, err := db.GetPrimaryWalletByUpiHandle("kaushiksaha004", "trx")
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
-	fmt.Println(wallet.ToString())
-	// for _, val := range wallets {
-	// 	val.ToString()
-	// }
+	// fmt.Println(wallet.ToString())
+	for _, val := range wallets {
+		fmt.Println(val.ToString())
+	}
 
 }
