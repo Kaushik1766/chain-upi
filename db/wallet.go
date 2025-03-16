@@ -57,3 +57,12 @@ func GetPrimaryWalletByUpiHandle(upiHandle string, chain string) (*models.Wallet
 	}
 	return &wallet, nil
 }
+
+func GetPrimaryWalletsByUpiHandle(upiHandle string) ([]models.Wallet, error) {
+	var wallets []models.Wallet
+	res := DB.Preload("User").Where(&models.Wallet{IsPrimary: true, User: models.User{UpiHandle: upiHandle}}).Find(&wallets)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	return wallets, nil
+}
