@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/Kaushik1766/chain-upi-gin/db"
-	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 )
 
@@ -22,13 +21,15 @@ func main() {
 		fmt.Println("DB connected.")
 	}
 
-	parsedId, err := uuid.Parse("97bba45f-9ae7-40a7-81f8-fb0ec5e29eef")
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
+	// parsedId, err := uuid.Parse("97bba45f-9ae7-40a7-81f8-fb0ec5e29eef")
+	// if err != nil {
+	// 	fmt.Println(err.Error())
+	// 	return
+	// }
 
-	err = db.SetPrimary("TCZVZUQpj1jB1YEoCMmhdAeNbCenkisrTq", parsedId, "trx")
+	// wallets, err := db.GetPrimaryWalletsByUpiHandle("kaushiksaha004")
+
+	// err = db.SetPrimary("TCZVZUQpj1jB1YEoCMmhdAeNbCenkisrTq", parsedId, "trx")
 	// wallets, err := db.GetWalletsByChain("kaushiksaha004", "trx")
 	// if err != nil {
 	// 	return
@@ -36,9 +37,15 @@ func main() {
 	// for _, val := range wallets {
 	// 	fmt.Println(val.ToString())
 	// }
+
+	wallet, err := db.GetPrimaryWalletByUpiHandle("kaushiksaha004", "trx")
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
+	fmt.Println(wallet.ToString())
+	// for _, val := range wallets {
+	// 	val.ToString()
+	// }
 
 }
