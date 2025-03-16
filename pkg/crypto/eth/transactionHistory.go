@@ -13,12 +13,12 @@ import (
 )
 
 type EtherscanResponse struct {
-	Status  string        `json:"status"`
-	Message string        `json:"message"`
-	Result  []Transaction `json:"result"`
+	Status  string           `json:"status"`
+	Message string           `json:"message"`
+	Result  []EthTransaction `json:"result"`
 }
 
-type Transaction struct {
+type EthTransaction struct {
 	BlockNumber   string `json:"blockNumber"`
 	TimeStamp     string `json:"timeStamp"`
 	Hash          string `json:"hash"`
@@ -38,12 +38,12 @@ func GetTransactions(walletAddress string) ([]models.Transaction, error) {
 
 	apiKey := os.Getenv("ETHERSCAN_API_KEY")
 	if apiKey == "" {
-		log.Fatal("ETHERSCAN_API_KEY not found in .env")
+		log.Println("ETHERSCAN_API_KEY not found in .env")
 	}
 
 	baseUrl := os.Getenv("ETH_BASE_URL")
 	url := baseUrl + fmt.Sprintf("api?module=account&action=txlist&address=%s&startblock=0&endblock=99999999&sort=desc&apikey=%s", walletAddress, apiKey)
-	// fmt.Println(url)
+	fmt.Println(url)
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Printf("Error making request: %v", err)
@@ -51,13 +51,15 @@ func GetTransactions(walletAddress string) ([]models.Transaction, error) {
 	defer resp.Body.Close()
 
 	var etherscanResp EtherscanResponse
-
 	if err := json.NewDecoder(resp.Body).Decode(&etherscanResp); err != nil {
 		log.Printf("Error decoding JSON: %v", err)
-
 	}
 
-	fmt.Println(etherscanResp.Message)
+	if etherscanResp.Status == "0" {
+		log.Println(etherscanResp.Message)
+		return nil, fmt.Errorf("error fetching transactions")
+	}
+	//fmt.Println(etherscanResp.Message)
 	var transactions []models.Transaction
 	for _, val := range etherscanResp.Result {
 		epochInt, err := strconv.ParseInt(val.TimeStamp, 10, 64)
