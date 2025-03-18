@@ -54,6 +54,7 @@ func GetPrimaryWalletByUpiHandle(upiHandle string, chain string) (*models.Wallet
 		Joins("JOIN users on users.uid=wallets.user_uid").
 		Where("wallets.chain=? and users.upi_handle=? and wallets.is_primary=?", chain, upiHandle, true).
 		First(&wallet)
+	// fmt.Println(wallet.ToString())
 	if res.Error != nil {
 		return nil, res.Error
 	}
@@ -62,7 +63,6 @@ func GetPrimaryWalletByUpiHandle(upiHandle string, chain string) (*models.Wallet
 
 func GetPrimaryWalletsByUpiHandle(upiHandle string) ([]models.Wallet, error) {
 	var wallets []models.Wallet
-	// res := DB.Preload("User").Where(&models.Wallet{IsPrimary: true, User: models.User{UpiHandle: upiHandle}}).Find(&wallets)
 	res := DB.Preload("User").
 		Joins("JOIN users on users.uid=wallets.user_uid").
 		Where("users.upi_handle=? and wallets.is_primary=?", upiHandle, true).Find(&wallets)
@@ -70,4 +70,14 @@ func GetPrimaryWalletsByUpiHandle(upiHandle string) ([]models.Wallet, error) {
 		return nil, res.Error
 	}
 	return wallets, nil
+}
+
+func VerifyWallet(walletAddress string, uid string) error {
+	var wallet models.Wallet
+	res := DB.Where("wallets.address=? and wallets.user_uid=?", walletAddress, uid).First(&wallet)
+	if res.Error != nil {
+		return res.Error
+	} else {
+		return nil
+	}
 }
