@@ -14,7 +14,7 @@ import (
 type RequestBody struct {
 	WalletAddress string `form:"walletAddress"`
 	Chain         string `form:"chain"`
-	UpiID         string `form:"upi_id"`
+	UpiID         string `form:"upi"`
 }
 
 // type QueryBody struct {

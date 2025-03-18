@@ -68,6 +68,8 @@ func GetTransactions(walletAddress string) ([]models.Transaction, error) {
 			ReceiverAddress: val.To,
 			TransactionHash: val.Hash,
 			TimeStamp:       timestamp,
+			SenderAddress:   val.OwnerAddress,
+			Chain:           "trx",
 		})
 	}
 	return transactions, nil

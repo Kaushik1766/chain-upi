@@ -74,7 +74,7 @@ func GetPrimaryWalletsByUpiHandle(upiHandle string) ([]models.Wallet, error) {
 
 func VerifyWallet(walletAddress string, uid string) error {
 	var wallet models.Wallet
-	res := DB.Preload("Wallet").Where("wallets.address=? and wallet.user_uid=?", walletAddress, uid).First(&wallet)
+	res := DB.Where("wallets.address=? and wallets.user_uid=?", walletAddress, uid).First(&wallet)
 	if res.Error != nil {
 		return res.Error
 	} else {

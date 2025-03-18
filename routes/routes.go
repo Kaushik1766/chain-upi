@@ -27,8 +27,8 @@ func CreateRoutes(r *gin.RouterGroup) {
 	transactionGroup.POST("/sendToUpi", transaction.SendToUpi())
 
 	transactionHistory := transactionGroup.Group("/history", middlware.Verify())
-	transactionHistory.GET("/ByUpi", transaction.TransactionHistoryByUpi())
-	transactionHistory.GET("/ByAddress", transaction.TransactionHistoryByAddress())
+	transactionHistory.GET("/upi", transaction.TransactionHistoryByUpi())
+	transactionHistory.GET("/address", transaction.TransactionHistoryByAddress())
 
 	// transactionGroup.POST("/sendToAddress", transaction.CreateTransaction())
 

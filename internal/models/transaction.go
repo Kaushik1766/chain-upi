@@ -10,6 +10,8 @@ type Transaction struct {
 	ReceiverAddress string    `json:"receiverAddress"`
 	TransactionHash string    `json:"transactionHash"`
 	TimeStamp       time.Time `json:"timeStamp"`
+	SenderAddress   string    `json:"senderAddress"`
+	Chain           string    `json:"chain"`
 }
 
 func (t *Transaction) ToString() string {
