@@ -35,7 +35,7 @@ func SendEth(ctx *gin.Context, sender *models.Wallet, receiver string, amount fl
 	}
 
 	fromAddr := crypto.PubkeyToAddress(*publicKeyECDSA)
-	nonce, err := client.PendingNonceAt(ctx, fromAddr)
+	nonce, err := client.PendingNonceAt(ctx.Request.Context(), fromAddr)
 
 	if err != nil {
 		log.Println(err)
