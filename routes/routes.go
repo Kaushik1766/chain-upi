@@ -1,11 +1,14 @@
 package routes
 
 import (
+	"time"
+
 	"github.com/Kaushik1766/chain-upi-gin/internal/handlers/auth"
 	"github.com/Kaushik1766/chain-upi-gin/internal/handlers/profile"
 	"github.com/Kaushik1766/chain-upi-gin/internal/handlers/transaction"
 	"github.com/Kaushik1766/chain-upi-gin/internal/handlers/wallet"
 	"github.com/Kaushik1766/chain-upi-gin/pkg/middlware"
+	"github.com/gin-contrib/timeout"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,7 +27,7 @@ func CreateRoutes(r *gin.RouterGroup) {
 	walletGroup.POST("/setPrimary", wallet.SetPrimary())
 
 	transactionGroup := r.Group("/transaction", middlware.Authenticate())
-	transactionGroup.POST("/sendToUpi", transaction.SendToUpi())
+	transactionGroup.POST("/sendToUpi", timeout.New(timeout.WithTimeout(10*time.Second)), transaction.SendToUpi())
 
 	transactionHistory := transactionGroup.Group("/history", middlware.Verify())
 	transactionHistory.GET("/upi", transaction.TransactionHistoryByUpi())
