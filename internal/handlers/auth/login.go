@@ -30,7 +30,9 @@ func Login() gin.HandlerFunc {
 		user, err := db.GetUser(reqBody.Email)
 		if err != nil {
 			fmt.Println(err.Error())
-			ctx.AbortWithStatus(http.StatusUnauthorized)
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"err": "Invalid credentials",
+			})
 			return
 		}
 
