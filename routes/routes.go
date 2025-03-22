@@ -17,6 +17,7 @@ func CreateRoutes(r *gin.RouterGroup) {
 	authGroup := r.Group("/auth")
 	authGroup.POST("/login", auth.Login())
 	authGroup.POST("/signup", auth.Signup())
+	authGroup.GET("/check", middlware.Authenticate(), auth.IsAuthenticated())
 	// authGroup.POST("/test", Test())
 
 	profileGroup := r.Group("/profile", middlware.Authenticate())
@@ -25,6 +26,7 @@ func CreateRoutes(r *gin.RouterGroup) {
 	walletGroup := r.Group("/wallet", middlware.Authenticate())
 	walletGroup.POST("/addWallet", middlware.ValidateWallet(), wallet.AddWallet())
 	walletGroup.POST("/setPrimary", wallet.SetPrimary())
+	walletGroup.GET("/getWallets", wallet.GetWallets())
 
 	transactionGroup := r.Group("/transaction", middlware.Authenticate())
 	transactionGroup.POST("/sendToUpi", timeout.New(

@@ -81,3 +81,14 @@ func VerifyWallet(walletAddress string, uid string) error {
 		return nil
 	}
 }
+
+func GetWalletsByUid(uid string) ([]models.Wallet, error) {
+	var wallets []models.Wallet
+	parsedUid, _ := uuid.Parse(uid)
+	res := DB.Where(models.Wallet{UserUID: parsedUid}).Find(&wallets)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	return wallets, nil
+
+}
