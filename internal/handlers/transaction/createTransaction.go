@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/Kaushik1766/chain-upi-gin/db"
+	"github.com/Kaushik1766/chain-upi-gin/pkg/crypto/eth"
 	"github.com/Kaushik1766/chain-upi-gin/pkg/crypto/trx"
 	"github.com/gin-gonic/gin"
 )
@@ -41,11 +42,16 @@ func SendToUpi() gin.HandlerFunc {
 			// create a wallet for the user in the chain
 		}
 
+		var et error
 		switch strings.ToLower(form.Chain) {
 		case "trx":
-			trx.SendTrx(senderPrimaryWallet, receiverPrimaryWallet.Address, form.Amount)
+			et = trx.SendTrx(senderPrimaryWallet, receiverPrimaryWallet.Address, form.Amount)
+		case "eth":
+			et = eth.SendEth(ctx, senderPrimaryWallet, receiverPrimaryWallet.Address, form.Amount)
 		}
-
+		if et != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": et.Error()})
+		}
 		ctx.JSON(http.StatusOK, gin.H{"message": "Transaction created"})
 	}
 }
