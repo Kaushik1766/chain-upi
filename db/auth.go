@@ -4,15 +4,13 @@ import (
 	"github.com/Kaushik1766/chain-upi-gin/internal/models"
 )
 
-func GetUser(email string) (models.User, error) {
-	user := models.User{
-		Email: email,
-	}
-	result := DB.First(&user)
+func GetUser(email string) (*models.User, error) {
+	var user models.User
+	result := DB.Where(models.User{Email: email}).First(&user)
 	if result.Error != nil {
-		return models.User{}, result.Error
+		return nil, result.Error
 	}
-	return user, nil
+	return &user, nil
 }
 
 func CreateUser(user *models.User) error {

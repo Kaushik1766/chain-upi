@@ -27,7 +27,10 @@ func CreateRoutes(r *gin.RouterGroup) {
 	walletGroup.POST("/setPrimary", wallet.SetPrimary())
 
 	transactionGroup := r.Group("/transaction", middlware.Authenticate())
-	transactionGroup.POST("/sendToUpi", timeout.New(timeout.WithTimeout(10*time.Second)), transaction.SendToUpi())
+	transactionGroup.POST("/sendToUpi", timeout.New(
+		timeout.WithTimeout(10*time.Second),
+		timeout.WithHandler(transaction.SendToUpi()),
+	))
 
 	transactionHistory := transactionGroup.Group("/history", middlware.Verify())
 	transactionHistory.GET("/upi", transaction.TransactionHistoryByUpi())
@@ -36,26 +39,3 @@ func CreateRoutes(r *gin.RouterGroup) {
 	// transactionGroup.POST("/sendToAddress", transaction.CreateTransaction())
 
 }
-
-// type testForm struct {
-// 	// Address string `json:"address" binding:"required"`
-// 	// PrivateKey string `json:"privateKey" binding:"required"`
-// 	UPI   string `json:"upi" binding:"required"`
-// 	Chain string `json:"chain" binding:"required"`
-// }
-
-// func Test() gin.HandlerFunc {
-// 	return func(ctx *gin.Context) {
-// 		var form testForm
-// 		if err := ctx.ShouldBindJSON(&form); err != nil {
-// 			ctx.JSON(400, gin.H{"error": "Invalid data"})
-// 			return
-// 		}
-// 		_, err := db.GetPrimaryWalletByUpiHandle(form.UPI, form.Chain)
-// 		if err != nil {
-// 			ctx.JSON(400, gin.H{"error": "Invalid data2"})
-// 			return
-// 		}
-// 		ctx.JSON(200, gin.H{"message": "wallet added"})
-// 	}
-// }
