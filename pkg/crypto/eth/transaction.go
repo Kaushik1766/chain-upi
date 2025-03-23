@@ -15,6 +15,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func ethToWei(amount float64) *big.Int {
+	weiStr := fmt.Sprintf("%.0f", amount*1e18)
+
+	wei := new(big.Int)
+	wei.SetString(weiStr, 10)
+
+	return wei
+}
+
 func SendEth(ctx *gin.Context, sender *models.Wallet, receiver string, amount float64) error {
 	var baseUrl string = os.Getenv("INFURA_BASE_URL")
 	client, err := ethclient.Dial(baseUrl + "v3/" + os.Getenv("INFURA_API_KEY"))
@@ -42,7 +51,7 @@ func SendEth(ctx *gin.Context, sender *models.Wallet, receiver string, amount fl
 		return err
 	}
 
-	value := big.NewInt(10000000000000000)
+	value := ethToWei(amount)
 	gasLimit := uint64(21000)
 	tip := big.NewInt(2000000000)
 	feeCap := big.NewInt(20000000000)
