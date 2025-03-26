@@ -24,7 +24,7 @@ func CreateRoutes(r *gin.RouterGroup) {
 	profileGroup.POST("/changePassword", profile.ChangePassword())
 
 	walletGroup := r.Group("/wallet", middlware.Authenticate())
-	walletGroup.POST("/addWallet", middlware.ValidateWallet(), wallet.AddWallet())
+	walletGroup.POST("/addWallet", wallet.AddWallet())
 	walletGroup.POST("/setPrimary", wallet.SetPrimary())
 	walletGroup.GET("/getWallets", wallet.GetWallets())
 

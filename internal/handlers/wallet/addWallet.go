@@ -13,7 +13,6 @@ import (
 )
 
 type WalletForm struct {
-	Address    string `json:"address" binding:"required"`
 	PrivateKey string `json:"privateKey" binding:"required"`
 	Chain      string `json:"chain" binding:"required"`
 }
@@ -21,19 +20,27 @@ type WalletForm struct {
 func AddWallet() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var form WalletForm
-		if err := ctx.ShouldBindJSON(&form); err != nil {
-			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
+		if err := ctx.ShouldBind(&form); err != nil {
+			fmt.Println(err.Error())
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid data."})
 			return
 		}
+		var wallet *models.Wallet
+		var err error
 		switch strings.ToLower(form.Chain) {
 		case "trx":
-			if !trx.ValidateAddress(form.Address) {
-				ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid Chain"})
-				return
-			}
+			wallet, err = trx.PrivateKeyToWallet(form.PrivateKey)
+		default:
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"msg": "invalid chain",
+			})
+		}
+		if err != nil {
+			ctx.AbortWithError(http.StatusBadRequest, err)
+			return
 		}
 
-		fmt.Println("Form: ", form)
+		// fmt.Println("Form: ", form)
 
 		uid, ok := ctx.Get("uid")
 		if !ok {
@@ -45,13 +52,8 @@ func AddWallet() gin.HandlerFunc {
 			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
-		wallet := models.Wallet{
-			Address:    form.Address,
-			PrivateKey: form.PrivateKey,
-			UserUID:    parsedUid,
-			Chain:      form.Chain,
-		}
-		err = db.AddWallet(&wallet)
+		wallet.UserUID = parsedUid
+		err = db.AddWallet(wallet)
 		if err != nil {
 			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
