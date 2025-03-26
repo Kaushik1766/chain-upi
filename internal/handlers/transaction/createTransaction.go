@@ -34,6 +34,7 @@ func SendToUpi() gin.HandlerFunc {
 
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Address not found for your account"})
+			return
 		}
 
 		receiverPrimaryWallet, err := db.GetPrimaryWalletByUpiHandle(form.ReceiverUPI, form.Chain)
@@ -51,6 +52,7 @@ func SendToUpi() gin.HandlerFunc {
 		}
 		if et != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": et.Error()})
+			return
 		}
 		ctx.JSON(http.StatusOK, gin.H{"message": "Transaction created"})
 	}
