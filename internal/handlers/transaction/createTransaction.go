@@ -10,16 +10,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type transactionForm struct {
+type transactionUPIForm struct {
 	Amount       float64 `json:"amount" binding:"required"`
 	ReceiverUPI  string  `json:"receiverUpi" binding:"required"`
 	Chain        string  `json:"chain" binding:"required"`
-	SenderWallet string  `json:"sender"`
+	SenderWallet string  `json:"wallet"`
 }
 
 func SendToUpi() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var form transactionForm
+		var form transactionUPIForm
 		if err := ctx.ShouldBindJSON(&form); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
 			return
@@ -29,6 +29,8 @@ func SendToUpi() gin.HandlerFunc {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 			return
 		}
+
+		// if form.SenderWallet
 
 		senderPrimaryWallet, err := db.GetPrimaryWalletByUpiHandle(senderUpi.(string), form.Chain)
 
@@ -55,5 +57,18 @@ func SendToUpi() gin.HandlerFunc {
 			return
 		}
 		ctx.JSON(http.StatusOK, gin.H{"message": "Transaction created"})
+	}
+}
+
+type transactionAddressForm struct {
+	Amount          float64 `json:"amount" binding:"required"`
+	ReceiverAddress string  `json:"receiverAddress" binding:"required"`
+	Chain           string  `json:"chain" binding:"required"`
+	SenderWallet    string  `json:"wallet"`
+}
+
+func SendToAddress() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
 	}
 }

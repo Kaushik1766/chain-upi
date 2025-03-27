@@ -58,7 +58,7 @@ func AddWallet() gin.HandlerFunc {
 		err = db.AddWallet(wallet)
 
 		if err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, err)
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Duplicate wallet found."})
 			return
 		}
 		ctx.JSON(http.StatusOK, gin.H{
