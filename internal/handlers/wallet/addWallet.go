@@ -1,7 +1,6 @@
 package wallet
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -12,7 +11,6 @@ import (
 	"github.com/Kaushik1766/chain-upi-gin/pkg/crypto/trx"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type WalletForm struct {
@@ -57,13 +55,7 @@ func AddWallet() gin.HandlerFunc {
 		}
 
 		wallet.UserUID = parsedUid
-		err = db.VerifyWallet(wallet.Address, uid.(string))
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			err = db.AddWallet(wallet)
-		} else if err == nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "wallet already exists"})
-			return
-		}
+		err = db.AddWallet(wallet)
 
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Duplicate wallet found."})
