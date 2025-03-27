@@ -17,6 +17,7 @@ func CreateRoutes(r *gin.RouterGroup) {
 	authGroup := r.Group("/auth")
 	authGroup.POST("/login", auth.Login())
 	authGroup.POST("/signup", auth.Signup())
+	authGroup.POST("/checkPassword", middlware.Authenticate(), auth.CheckPassword())
 	authGroup.GET("/check", middlware.Authenticate(), auth.IsAuthenticated())
 	// authGroup.POST("/test", Test())
 
