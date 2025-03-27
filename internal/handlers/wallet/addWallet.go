@@ -3,15 +3,16 @@ package wallet
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/Kaushik1766/chain-upi-gin/db"
 	"github.com/Kaushik1766/chain-upi-gin/internal/models"
+	"github.com/Kaushik1766/chain-upi-gin/pkg/crypto/trx"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 type WalletForm struct {
-	Address    string `json:"address" binding:"required"`
 	PrivateKey string `json:"privateKey" binding:"required"`
 	Chain      string `json:"chain" binding:"required"`
 }
@@ -19,19 +20,27 @@ type WalletForm struct {
 func AddWallet() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var form WalletForm
-		// if err := ctx.ShouldBindJSON(&form); err != nil {
-		// 	ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
-		// 	fmt.Println("Controller Error: ", err.Error())
-		// 	return
-		// }
-		body, exists := ctx.Get("wallet")
-		if !exists {
-			ctx.AbortWithStatus(http.StatusInternalServerError)
+		if err := ctx.ShouldBind(&form); err != nil {
+			fmt.Println(err.Error())
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid data."})
+			return
+		}
+		var wallet *models.Wallet
+		var err error
+		switch strings.ToLower(form.Chain) {
+		case "trx":
+			wallet, err = trx.PrivateKeyToWallet(form.PrivateKey)
+		default:
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"msg": "invalid chain",
+			})
+		}
+		if err != nil {
+			ctx.AbortWithError(http.StatusBadRequest, err)
 			return
 		}
 
-		form = body.(WalletForm)
-		fmt.Println("Form: ", form)
+		// fmt.Println("Form: ", form)
 
 		uid, ok := ctx.Get("uid")
 		if !ok {
@@ -43,13 +52,8 @@ func AddWallet() gin.HandlerFunc {
 			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
-		wallet := models.Wallet{
-			Address:    form.Address,
-			PrivateKey: form.PrivateKey,
-			UserUID:    parsedUid,
-			Chain:      form.Chain,
-		}
-		err = db.AddWallet(&wallet)
+		wallet.UserUID = parsedUid
+		err = db.AddWallet(wallet)
 		if err != nil {
 			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
