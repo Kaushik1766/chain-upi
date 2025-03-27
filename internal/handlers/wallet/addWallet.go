@@ -7,6 +7,7 @@ import (
 
 	"github.com/Kaushik1766/chain-upi-gin/db"
 	"github.com/Kaushik1766/chain-upi-gin/internal/models"
+	"github.com/Kaushik1766/chain-upi-gin/pkg/crypto/eth"
 	"github.com/Kaushik1766/chain-upi-gin/pkg/crypto/trx"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -30,6 +31,8 @@ func AddWallet() gin.HandlerFunc {
 		switch strings.ToLower(form.Chain) {
 		case "trx":
 			wallet, err = trx.PrivateKeyToWallet(form.PrivateKey)
+		case "eth":
+			wallet, err = eth.PrivateKeyToWallet(form.PrivateKey)
 		default:
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"msg": "invalid chain",
@@ -39,8 +42,6 @@ func AddWallet() gin.HandlerFunc {
 			ctx.AbortWithError(http.StatusBadRequest, err)
 			return
 		}
-
-		// fmt.Println("Form: ", form)
 
 		uid, ok := ctx.Get("uid")
 		if !ok {
@@ -52,12 +53,17 @@ func AddWallet() gin.HandlerFunc {
 			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
+
 		wallet.UserUID = parsedUid
 		err = db.AddWallet(wallet)
+
 		if err != nil {
-			ctx.AbortWithStatus(http.StatusInternalServerError)
+			ctx.AbortWithError(http.StatusBadRequest, err)
 			return
 		}
-		ctx.JSON(200, gin.H{"message": "wallet added"})
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": "wallet added successfully",
+			"wallet":  wallet.Address,
+		})
 	}
 }
