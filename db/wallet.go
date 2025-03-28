@@ -1,6 +1,8 @@
 package db
 
 import (
+	"fmt"
+
 	"github.com/Kaushik1766/chain-upi-gin/internal/models"
 	"github.com/google/uuid"
 )
@@ -91,4 +93,17 @@ func GetWalletsByUid(uid string) ([]models.Wallet, error) {
 	}
 	return wallets, nil
 
+}
+
+// func to get full wallet details by uid, address and chain
+func GetUserWallet(uid string, address string, chain string) (*models.Wallet, error) {
+	var wallet models.Wallet
+	parsedUid, _ := uuid.Parse(uid)
+
+	res := DB.Where(models.Wallet{UserUID: parsedUid, Address: address, Chain: chain}).First(&wallet)
+	if res.Error != nil {
+		fmt.Println(res.Error.Error())
+		return nil, res.Error
+	}
+	return &wallet, nil
 }
