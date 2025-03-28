@@ -15,7 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ethToWei(amount float64) *big.Int {
+func EthToWei(amount float64) *big.Int {
 	weiStr := fmt.Sprintf("%.0f", amount*1e18)
 
 	wei := new(big.Int)
@@ -51,7 +51,7 @@ func SendEth(ctx *gin.Context, sender *models.Wallet, receiver string, amount fl
 		return "", err
 	}
 
-	value := ethToWei(amount)
+	value := EthToWei(amount)
 	gasLimit := uint64(21000)
 	tip := big.NewInt(2000000000)
 	feeCap := big.NewInt(20000000000)
