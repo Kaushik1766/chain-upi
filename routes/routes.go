@@ -38,6 +38,7 @@ func CreateRoutes(r *gin.RouterGroup) {
 		timeout.WithTimeout(10*time.Second),
 		timeout.WithHandler(transaction.SendToUpi()),
 	))
+	transactionGroup.GET("/balance", transaction.GetBalance())
 
 	transactionHistoryGroup := transactionGroup.Group("/history", middlware.Verify())
 	transactionHistoryGroup.GET("/upi", transaction.TransactionHistoryByUpi())
