@@ -24,7 +24,7 @@ func GetBalance(address string) (string, error) {
 		return "", fmt.Errorf("ETHERSCAN_API_KEY not found in .env")
 
 	}
-	url := baseUrl + fmt.Sprintf("v2/api?chainid=1&module=account&action=balance&address=%s&tag=latest&apikey=%s", address, apiKey)
+	url := baseUrl + fmt.Sprintf("api?chainid=1&module=account&action=balance&address=%s&tag=latest&apikey=%s", address, apiKey)
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", err
@@ -43,9 +43,4 @@ func GetBalance(address string) (string, error) {
 		wei, _ := new(big.Int).SetString(ethResp.Result, 10)
 		return fmt.Sprint(WeiToEth(wei)), nil
 	}
-}
-func WeiToEth(wei *big.Int) *big.Float {
-	weiFloat := new(big.Float).SetInt(wei)
-	weiRes := new(big.Float).Quo(weiFloat, big.NewFloat(1e18))
-	return weiRes
 }

@@ -37,7 +37,47 @@ func SendToUpi() gin.HandlerFunc {
 
 		receiverWallet, err := db.GetPrimaryWalletByUpiHandle(form.ReceiverUPI, form.Chain)
 		if err != nil {
-			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Error with receiver upi"})
+			// ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Error with receiver upi"})
+			switch strings.ToLower(form.ReceiverUPI) {
+			case "trx":
+				uid, err := db.GetUserIDByHandle(form.ReceiverUPI)
+				if err != nil {
+					ctx.JSON(http.StatusBadGateway, gin.H{"error": "invalid upi"})
+					return
+				}
+				privKey, addr := trx.GenerateWallet()
+				receiverWallet = &models.Wallet{
+					UserUID:    uid,
+					Address:    addr,
+					PrivateKey: privKey,
+					IsPrimary:  true,
+					Chain:      "trx",
+				}
+				er := db.AddWallet(receiverWallet)
+				if er != nil {
+					ctx.JSON(http.StatusBadRequest, gin.H{"error": "couldn't add wallet"})
+					return
+				}
+			case "eth":
+				uid, err := db.GetUserIDByHandle(form.ReceiverUPI)
+				if err != nil {
+					ctx.JSON(http.StatusBadGateway, gin.H{"error": "invalid upi"})
+					return
+				}
+				privKey, addr := eth.GenEthWallet()
+				receiverWallet = &models.Wallet{
+					UserUID:    uid,
+					Address:    addr,
+					PrivateKey: privKey,
+					IsPrimary:  true,
+					Chain:      "eth",
+				}
+				er := db.AddWallet(receiverWallet)
+				if er != nil {
+					ctx.JSON(http.StatusBadRequest, gin.H{"error": "couldn't add wallet"})
+					return
+				}
+			}
 		}
 
 		// case - sender does not provides a wallet for payment
@@ -54,7 +94,7 @@ func SendToUpi() gin.HandlerFunc {
 			case "eth":
 				hash, err = eth.SendEth(ctx, senderWallet, receiverWallet.Address, form.Amount)
 			default:
-				ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid chain"})
+				ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid chain"})
 				return
 			}
 
@@ -79,7 +119,7 @@ func SendToUpi() gin.HandlerFunc {
 			case "eth":
 				hash, err = eth.SendEth(ctx, senderWallet, receiverWallet.Address, form.Amount)
 			default:
-				ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid chain"})
+				ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid chain"})
 				return
 			}
 			if err != nil {

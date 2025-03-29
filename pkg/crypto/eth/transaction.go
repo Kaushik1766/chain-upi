@@ -24,6 +24,12 @@ func EthToWei(amount float64) *big.Int {
 	return wei
 }
 
+func WeiToEth(wei *big.Int) *big.Float {
+	weiFloat := new(big.Float).SetInt(wei)
+	weiRes := new(big.Float).Quo(weiFloat, big.NewFloat(1e18))
+	return weiRes
+}
+
 func SendEth(ctx *gin.Context, sender *models.Wallet, receiver string, amount float64) (string, error) {
 	var baseUrl string = os.Getenv("INFURA_BASE_URL")
 	client, err := ethclient.Dial(baseUrl + "v3/" + os.Getenv("INFURA_API_KEY"))
@@ -89,10 +95,6 @@ func SendEth(ctx *gin.Context, sender *models.Wallet, receiver string, amount fl
 		return "", err
 	}
 
-	// log.Println(signedTx.Hash().Hex())
-
-	etherscan := os.Getenv("ETHERSCAN_BASE")
-	hash := etherscan + "/tx/" + signedTx.Hash().String()
-	// fmt.Println(hash)
-	return hash, nil
+	log.Println(signedTx.Hash().Hex())
+	return signedTx.Hash().String(), nil
 }
