@@ -1,6 +1,8 @@
 package db
 
 import (
+	"fmt"
+
 	"github.com/Kaushik1766/chain-upi-gin/internal/models"
 	"github.com/google/uuid"
 )
@@ -21,18 +23,21 @@ func AddWallet(wallet *models.Wallet) error {
 	return nil
 }
 
-func SetPrimary(walletAddress string, uid uuid.UUID, chain string) error {
+func SetPrimary(walletAddress string, uid string, chain string) error {
 
-	wallet := models.Wallet{
-		// Address: walletAddress,
-		UserUID: uid,
-	}
-	res := DB.Model(&wallet).Where(&models.Wallet{IsPrimary: true, Chain: chain}).Update("IsPrimary", false)
+	// var wallet models.Wallet
+	fmt.Println("setprimarydb" + uid)
+	parsedUid, _ := uuid.Parse(uid)
+	res := DB.Model(&models.Wallet{}).
+		Where("wallets.is_primary = ? and wallets.chain = ? and wallets.user_uid = ?", true, chain, parsedUid).
+		Update("IsPrimary", false)
+	// res := DB.Model(&wallet).Where(&models.Wallet{IsPrimary: true, Chain: chain}).Update("IsPrimary", false)
 	if res.Error != nil {
 		return res.Error
 	}
-	wallet.Address = walletAddress
-	res = DB.Model(&wallet).Update("IsPrimary", true)
+	res = DB.Model(&models.Wallet{}).
+		Where("wallets.address = ? and wallets.user_uid = ? and wallets.chain = ?", walletAddress, parsedUid, chain).
+		Update("IsPrimary", true)
 	if res.Error != nil {
 		return res.Error
 	}
@@ -91,4 +96,29 @@ func GetWalletsByUid(uid string) ([]models.Wallet, error) {
 	}
 	return wallets, nil
 
+}
+
+// func to get full wallet details by uid, address and chain
+func GetUserWallet(uid string, address string, chain string) (*models.Wallet, error) {
+	var wallet models.Wallet
+	parsedUid, _ := uuid.Parse(uid)
+
+	res := DB.Where(models.Wallet{UserUID: parsedUid, Address: address, Chain: chain}).First(&wallet)
+	if res.Error != nil {
+		fmt.Println(res.Error.Error())
+		return nil, res.Error
+	}
+	return &wallet, nil
+}
+
+func GetPrimaryWalletByUid(uid string, chain string) (*models.Wallet, error) {
+	var wallet models.Wallet
+	parsedUid, _ := uuid.Parse(uid)
+
+	res := DB.Where(models.Wallet{UserUID: parsedUid, IsPrimary: true, Chain: chain}).First(&wallet)
+	if res.Error != nil {
+		fmt.Println(res.Error.Error())
+		return nil, res.Error
+	}
+	return &wallet, nil
 }

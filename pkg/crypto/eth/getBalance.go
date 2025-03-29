@@ -44,3 +44,8 @@ func GetBalance(address string) (string, error) {
 		return fmt.Sprint(WeiToEth(wei)), nil
 	}
 }
+func WeiToEth(wei *big.Int) *big.Float {
+	weiFloat := new(big.Float).SetInt(wei)
+	weiRes := new(big.Float).Quo(weiFloat, big.NewFloat(1e18))
+	return weiRes
+}
