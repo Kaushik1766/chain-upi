@@ -2,7 +2,9 @@ package wallet
 
 import (
 	"net/http"
+	"strings"
 
+	"github.com/Kaushik1766/chain-upi-gin/pkg/crypto/trx"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,8 +20,21 @@ func GetBalance() gin.HandlerFunc {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
 			return
 		}
-		// switch strings.ToLower(form.Chain){
-		// 	case ""
-		// }
+		var balance float64
+		var err error
+		switch strings.ToLower(form.Chain) {
+		case "trx":
+			balance, err = trx.GetBalance(form.Address)
+		case "eth":
+			balance, err = trx.GetBalance(form.Address)
+		default:
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid chain"})
+			return
+		}
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Error getting balance"})
+			return
+		}
+		ctx.AbortWithStatusJSON(http.StatusOK, gin.H{"balance": balance})
 	}
 }

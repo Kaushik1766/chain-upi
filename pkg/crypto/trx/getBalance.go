@@ -12,29 +12,8 @@ import (
 
 // Account represents the response structure for the Tron getaccount API
 type Account struct {
-	Address                  string               `json:"address"`                               // The account address (base58check format)
-	Balance                  int64                `json:"balance"`                               // TRX balance in sun (1 TRX = 1,000,000 sun)
-	Votes                    []Vote               `json:"votes,omitempty"`                       // List of votes for witnesses
-	Frozen                   []Frozen             `json:"frozen,omitempty"`                      // Frozen balances for staking
-	NetWindowSize            int64                `json:"net_window_size,omitempty"`             // Bandwidth window size
-	NetWindowOptimized       bool                 `json:"net_window_optimized,omitempty"`        // Whether bandwidth window is optimized
-	CreateTime               time.Time            `json:"create_time,omitempty"`                 // Account creation timestamp
-	LatestOprationTime       time.Time            `json:"latest_opration_time,omitempty"`        // Last operation timestamp
-	Allowance                int64                `json:"allowance,omitempty"`                   // Withdrawable allowance
-	LatestWithdrawTime       time.Time            `json:"latest_withdraw_time,omitempty"`        // Last withdrawal timestamp
-	Code                     string               `json:"code,omitempty"`                        // Smart contract code (if any)
-	IsWitness                bool                 `json:"is_witness,omitempty"`                  // Whether the account is a witness
-	IsCommittee              bool                 `json:"is_committee,omitempty"`                // Whether the account is a committee member
-	FrozenSupply             []Frozen             `json:"frozen_supply,omitempty"`               // Frozen supply for token issuance
-	Asset                    map[string]int64     `json:"asset,omitempty"`                       // Map of asset balances (token name -> amount)
-	LatestAssetOperationTime map[string]time.Time `json:"latest_asset_operation_time,omitempty"` // Last operation time per asset
-	FreeNetUsage             int64                `json:"free_net_usage,omitempty"`              // Free bandwidth usage
-	FreeNetLimit             int64                `json:"free_net_limit,omitempty"`              // Free bandwidth limit
-	NetUsage                 int64                `json:"net_usage,omitempty"`                   // Total bandwidth usage
-	NetLimit                 int64                `json:"net_limit,omitempty"`                   // Total bandwidth limit
-	EnergyUsage              int64                `json:"energy_usage,omitempty"`                // Energy usage
-	EnergyLimit              int64                `json:"energy_limit,omitempty"`                // Energy limit
-	AccountResource          AccountResource      `json:"account_resource,omitempty"`            // Additional account resources
+	Address string `json:"address"` // The account address (base58check format)
+	Balance int64  `json:"balance"` // TRX balance in sun (1 TRX = 1,000,000 sun)
 }
 
 // Vote represents a vote entry for a witness
@@ -59,7 +38,7 @@ type AccountResource struct {
 
 func GetBalance(wallet string) (float64, error) {
 	baseUrl := os.Getenv("TRX_BASE_URL")
-	url := baseUrl + "/wallet/validateaddress"
+	url := baseUrl + "/wallet/getaccount"
 
 	payload := strings.NewReader("{\"address\":\"" + wallet + "\",\"visible\":true}")
 
@@ -75,6 +54,7 @@ func GetBalance(wallet string) (float64, error) {
 	}
 	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
+	// fmt.Println(string(body))
 	if err != nil {
 		fmt.Println(err)
 		return 0, err
