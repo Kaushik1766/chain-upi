@@ -8,18 +8,21 @@ import (
 	"github.com/Kaushik1766/chain-upi-gin/internal/handlers/transaction"
 	"github.com/Kaushik1766/chain-upi-gin/internal/handlers/wallet"
 	"github.com/Kaushik1766/chain-upi-gin/pkg/middlware"
+
+	// "github.com/Kaushik1766/chain-upi-gin/tmp"
 	"github.com/gin-contrib/timeout"
 	"github.com/gin-gonic/gin"
 )
 
 func CreateRoutes(r *gin.RouterGroup) {
 	// authGroup := r.Group("auth/", middlware.Authenticate())
+	// testGroup := r.Group("/test")
+	// testGroup.GET("/test", tmp.Test())
 	authGroup := r.Group("/auth")
 	authGroup.POST("/login", auth.Login())
 	authGroup.POST("/signup", auth.Signup())
 	authGroup.POST("/checkPassword", middlware.Authenticate(), auth.CheckPassword())
 	authGroup.GET("/check", middlware.Authenticate(), auth.IsAuthenticated())
-	// authGroup.POST("/test", Test())
 
 	profileGroup := r.Group("/profile", middlware.Authenticate())
 	profileGroup.POST("/changePassword", profile.ChangePassword())

@@ -121,4 +121,12 @@ func GetPrimaryWalletByUid(uid string, chain string) (*models.Wallet, error) {
 		return nil, res.Error
 	}
 	return &wallet, nil
+	
+func GetUserIDByHandle(upiID string) (uuid.UUID, error) {
+	var user models.User
+	result := DB.Where(models.User{UpiHandle: upiID}).First(&user)
+	if result.Error != nil {
+		return uuid.Nil, result.Error
+	}
+	return user.UID, nil
 }
