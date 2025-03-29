@@ -96,5 +96,5 @@ func SendEth(ctx *gin.Context, sender *models.Wallet, receiver string, amount fl
 	}
 
 	log.Println(signedTx.Hash().Hex())
-	return signedTx.Hash().String(), nil
+	return "https://sepolia.etherscan.io/tx/" + signedTx.Hash().String(), nil
 }

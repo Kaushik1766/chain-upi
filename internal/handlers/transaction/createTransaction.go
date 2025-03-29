@@ -38,16 +38,19 @@ func SendToUpi() gin.HandlerFunc {
 		receiverWallet, err := db.GetPrimaryWalletByUpiHandle(form.ReceiverUPI, form.Chain)
 		if err != nil {
 			// ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Error with receiver upi"})
-			switch strings.ToLower(form.ReceiverUPI) {
+			fmt.Println("receiver wallet not found")
+			receiver, err := db.GetUserByHandle(form.ReceiverUPI)
+			if err != nil {
+				fmt.Println(err.Error())
+				ctx.JSON(http.StatusBadGateway, gin.H{"error": "invalid upi"})
+				return
+			}
+			switch strings.ToLower(form.Chain) {
 			case "trx":
-				uid, err := db.GetUserIDByHandle(form.ReceiverUPI)
-				if err != nil {
-					ctx.JSON(http.StatusBadGateway, gin.H{"error": "invalid upi"})
-					return
-				}
+				fmt.Println("receiver uid", receiver)
 				privKey, addr := trx.GenerateWallet()
 				receiverWallet = &models.Wallet{
-					UserUID:    uid,
+					UserUID:    receiver.UID,
 					Address:    addr,
 					PrivateKey: privKey,
 					IsPrimary:  true,
@@ -59,14 +62,9 @@ func SendToUpi() gin.HandlerFunc {
 					return
 				}
 			case "eth":
-				uid, err := db.GetUserIDByHandle(form.ReceiverUPI)
-				if err != nil {
-					ctx.JSON(http.StatusBadGateway, gin.H{"error": "invalid upi"})
-					return
-				}
 				privKey, addr := eth.GenEthWallet()
 				receiverWallet = &models.Wallet{
-					UserUID:    uid,
+					UserUID:    receiver.UID,
 					Address:    addr,
 					PrivateKey: privKey,
 					IsPrimary:  true,
@@ -79,6 +77,7 @@ func SendToUpi() gin.HandlerFunc {
 				}
 			}
 		}
+		fmt.Println("receiver wallet", receiverWallet.ToString())
 
 		// case - sender does not provides a wallet for payment
 		if form.SenderWallet == nil {
