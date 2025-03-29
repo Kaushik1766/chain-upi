@@ -2,12 +2,13 @@ package trx
 
 import (
 	"bytes"
-	"crypto/ecdsa"
-	"crypto/rand"
-	"encoding/hex"
+	// "crypto/ecdsa"
+	// "crypto/rand"
+	// "encoding/hex"
 	"encoding/json"
 	"fmt"
-	"log"
+
+	// "log"
 	"math/big"
 	"net/http"
 	"os"
@@ -88,66 +89,6 @@ func calculateRecoveryID(r, s *big.Int, privKey *secp256k1.PrivateKey, hash []by
 	}
 
 	return v
-}
-
-func SendTrx(sender *models.Wallet, receiver string, amount float64) (string, error) {
-	// Replace with your TRON private key (Hex format)
-	privateKeyHex := sender.PrivateKey // Replace with your actual private key
-	privateKeyBytes, err := hex.DecodeString(privateKeyHex)
-	if err != nil {
-		log.Printf("Invalid private key: %v", err)
-		return "", err
-	}
-
-	// Step 1: Load private key using secp256k1
-	privateKey := secp256k1.PrivKeyFromBytes(privateKeyBytes)
-
-	// Step 2: Create unsigned transaction via TronGrid API
-	tx, err := createUnsignedTransaction(sender.Address, receiver, int64(amount))
-	if err != nil {
-		log.Printf("Failed to create transaction: %v", err)
-		return "", err
-	}
-
-	// Step 3: Decode txID (hash of raw_data) to bytes
-	txHash, err := hex.DecodeString(tx.TxID)
-	if err != nil {
-		log.Printf("Failed to decode txID: %v", err)
-		return "", err
-	}
-
-	// Step 4: Sign the transaction hash using secp256k1
-	r, s, err := ecdsa.Sign(rand.Reader, privateKey.ToECDSA(), txHash)
-	if err != nil {
-		log.Printf("Failed to sign transaction: %v", err)
-		return "", err
-	}
-
-	// Ensure r and s are 32 bytes each
-	sigBytesArr := padBytes(r.Bytes(), 32)
-	sigBytesArr = append(sigBytesArr, padBytes(s.Bytes(), 32)...)
-
-	// Calculate v
-	v := calculateRecoveryID(r, s, privateKey, txHash)
-	vAdjusted := new(big.Int).Sub(big.NewInt(int64(v)), big.NewInt(27))
-
-	// Append v to signature
-	fullSig := append(sigBytesArr, byte(vAdjusted.Int64()))
-
-	// Convert to hex
-	sigHex := hex.EncodeToString(fullSig)
-
-	// Step 6: Attach signature to transaction
-	tx.Signature = []string{sigHex}
-
-	// Step 7: Broadcast the transaction
-	err = broadcastTx(tx)
-	if err != nil {
-		log.Printf("Failed to broadcast transaction: %v", err)
-		return "", err
-	}
-
-	return tx.TxID, nil
 }
 
 // createUnsignedTransaction calls TronGrid's createtransaction API
