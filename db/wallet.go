@@ -132,3 +132,13 @@ func GetUserByHandle(upiID string) (*models.User, error) {
 	}
 	return &user, nil
 }
+
+func DeleteWallet(walletAddress string, chain string, uid string) error {
+	var wallet models.Wallet
+	parsedUid, _ := uuid.Parse(uid)
+	res := DB.Where(&models.Wallet{Address: walletAddress, Chain: chain, UserUID: parsedUid}).Delete(&wallet)
+	if res.Error != nil {
+		return res.Error
+	}
+	return nil
+}

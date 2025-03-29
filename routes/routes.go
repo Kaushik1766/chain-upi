@@ -32,6 +32,7 @@ func CreateRoutes(r *gin.RouterGroup) {
 	walletGroup.POST("/setPrimary", wallet.SetPrimary())
 	walletGroup.GET("/getWallets", wallet.GetWallets())
 	walletGroup.POST("/getBalance", wallet.GetBalance())
+	walletGroup.POST("/deleteWallet", wallet.DeleteWallet())
 
 	transactionGroup := r.Group("/transaction", middlware.Authenticate())
 	transactionGroup.POST("/sendToUpi", timeout.New(
