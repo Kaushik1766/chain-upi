@@ -39,20 +39,27 @@ func GetTransactions(walletAddress string) ([]models.Transaction, error) {
 	apiKey := os.Getenv("ETHERSCAN_API_KEY")
 	if apiKey == "" {
 		log.Println("ETHERSCAN_API_KEY not found in .env")
+		return nil, fmt.Errorf("ETHERSCAN_API_KEY not found in .env")
 	}
 
 	baseUrl := os.Getenv("ETH_BASE_URL")
+	if baseUrl == "" {
+		log.Println("ETHERSCAN_BASE_URL not found in .env")
+		return nil, fmt.Errorf("ETHERSCAN_BASE_URL not found in .env")
+	}
 	url := baseUrl + fmt.Sprintf("api?module=account&action=txlist&address=%s&startblock=0&endblock=99999999&sort=desc&apikey=%s", walletAddress, apiKey)
-	fmt.Println(url)
+	// fmt.Println(url)
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Printf("Error making request: %v", err)
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	var etherscanResp EtherscanResponse
 	if err := json.NewDecoder(resp.Body).Decode(&etherscanResp); err != nil {
 		log.Printf("Error decoding JSON: %v", err)
+		return nil, err
 	}
 
 	if etherscanResp.Status == "0" {

@@ -1,5 +1,11 @@
 package eth
 
+import "github.com/ethereum/go-ethereum/common"
+
 func ValidateWallet(wallet string) bool {
-	return true
+	if common.IsHexAddress(wallet) {
+		return true
+	} else {
+		return false
+	}
 }
