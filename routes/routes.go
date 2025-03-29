@@ -36,7 +36,7 @@ func CreateRoutes(r *gin.RouterGroup) {
 	))
 	transactionGroup.POST("/sendToAddress", timeout.New(
 		timeout.WithTimeout(10*time.Second),
-		timeout.WithHandler(transaction.SendToUpi()),
+		timeout.WithHandler(transaction.SendToAddress()),
 	))
 
 	transactionHistoryGroup := transactionGroup.Group("/history", middlware.Verify())

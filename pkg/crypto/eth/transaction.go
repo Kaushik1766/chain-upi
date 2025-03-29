@@ -24,23 +24,23 @@ func ethToWei(amount float64) *big.Int {
 	return wei
 }
 
-func SendEth(ctx *gin.Context, sender *models.Wallet, receiver string, amount float64) error {
+func SendEth(ctx *gin.Context, sender *models.Wallet, receiver string, amount float64) (string, error) {
 	var baseUrl string = os.Getenv("INFURA_BASE_URL")
 	client, err := ethclient.Dial(baseUrl + "v3/" + os.Getenv("INFURA_API_KEY"))
 	if err != nil {
 		log.Println(err)
-		return err
+		return "", err
 	}
 	privateKey, err := crypto.HexToECDSA(sender.PrivateKey)
 	if err != nil {
 		log.Println(err)
-		return err
+		return "", err
 	}
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
 		log.Println("error casting public key to ECDSA")
-		return fmt.Errorf("error casting public key to ECDSA")
+		return "", fmt.Errorf("error casting public key to ECDSA")
 	}
 
 	fromAddr := crypto.PubkeyToAddress(*publicKeyECDSA)
@@ -48,7 +48,7 @@ func SendEth(ctx *gin.Context, sender *models.Wallet, receiver string, amount fl
 
 	if err != nil {
 		log.Println(err)
-		return err
+		return "", err
 	}
 
 	value := ethToWei(amount)
@@ -62,7 +62,7 @@ func SendEth(ctx *gin.Context, sender *models.Wallet, receiver string, amount fl
 
 	if err != nil {
 		log.Println(err)
-		return err
+		return "", err
 	}
 
 	tx := types.NewTx(&types.DynamicFeeTx{
@@ -79,16 +79,20 @@ func SendEth(ctx *gin.Context, sender *models.Wallet, receiver string, amount fl
 	signedTx, err := types.SignTx(tx, types.LatestSignerForChainID(chainID), privateKey)
 	if err != nil {
 		log.Println(err)
-		return err
+		return "", err
 	}
 
 	err = client.SendTransaction(ctx.Request.Context(), signedTx)
 
 	if err != nil {
 		log.Println(err)
-		return err
+		return "", err
 	}
 
-	log.Println(signedTx.Hash().Hex())
-	return nil
+	// log.Println(signedTx.Hash().Hex())
+
+	etherscan := os.Getenv("ETHERSCAN_BASE")
+	hash := etherscan + "/tx/" + signedTx.Hash().String()
+	// fmt.Println(hash)
+	return hash, nil
 }

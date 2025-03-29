@@ -88,21 +88,22 @@ func BroadcastTransaction(signedTx []byte) error {
 }
 
 // SendTrx orchestrates the full transaction process
-func SendTrx(sender *models.Wallet, receiver string, amount float64) error {
+func SendTrx(sender *models.Wallet, receiver string, amount float64) (string, error) {
 	unsignedTx, err := CreateTransaction(sender.Address, receiver, amount)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	privateKey, err := crypto.HexToECDSA(sender.PrivateKey)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	signedTx, err := SignTransaction(unsignedTx, privateKey)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return BroadcastTransaction(signedTx)
+	_ = BroadcastTransaction(signedTx)
+	return "", nil
 }

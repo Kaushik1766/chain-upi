@@ -107,3 +107,15 @@ func GetUserWallet(uid string, address string, chain string) (*models.Wallet, er
 	}
 	return &wallet, nil
 }
+
+func GetPrimaryWalletByUid(uid string, chain string) (*models.Wallet, error) {
+	var wallet models.Wallet
+	parsedUid, _ := uuid.Parse(uid)
+
+	res := DB.Where(models.Wallet{UserUID: parsedUid, IsPrimary: true, Chain: chain}).First(&wallet)
+	if res.Error != nil {
+		fmt.Println(res.Error.Error())
+		return nil, res.Error
+	}
+	return &wallet, nil
+}
