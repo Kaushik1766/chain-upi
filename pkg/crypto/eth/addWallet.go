@@ -10,12 +10,11 @@ import (
 
 	"golang.org/x/crypto/sha3"
 
-	"github.com/Kaushik1766/chain-upi-gin/internal/models"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/crypto/secp256k1"
 )
 
-func PrivateKeyToWallet(PrivateKey string) (*models.Wallet, error) {
+func PrivateKeyToWallet(PrivateKey string) (*string, error) {
 	privateKey, err := crypto.HexToECDSA(PrivateKey)
 	if err != nil {
 		log.Println(err)
@@ -29,17 +28,18 @@ func PrivateKeyToWallet(PrivateKey string) (*models.Wallet, error) {
 		return nil, fmt.Errorf("error casting public key to ECDSA")
 	}
 	walletAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
-	wallet := models.Wallet{
-		Address:    walletAddress.String(),
-		PrivateKey: PrivateKey,
-		Chain:      "eth",
-	}
+	addr := walletAddress.String()
+	// wallet := models.Wallet{
+	// 	Address:    walletAddress.String(),
+	// 	PrivateKey: PrivateKey,
+	// 	Chain:      "eth",
+	// }
 	// err = db.AddWallet(&wallet)
 	// if err != nil {
 	// 	log.Println(err)
 	// 	return nil, err
 	// }
-	return &wallet, nil
+	return &addr, nil
 }
 func toChecksumAddress(address string) string {
 	// Remove '0x' prefix and convert to lowercase

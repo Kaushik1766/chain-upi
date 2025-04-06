@@ -89,9 +89,9 @@ func SendToUpi() gin.HandlerFunc {
 			var hash string
 			switch strings.ToLower(form.Chain) {
 			case "trx":
-				hash, err = trx.SendTrx(senderWallet, receiverWallet.Address, form.Amount)
+				hash, err = trx.SendTrx(senderWallet.Address, senderWallet.PrivateKey, receiverWallet.Address, form.Amount)
 			case "eth":
-				hash, err = eth.SendEth(ctx, senderWallet, receiverWallet.Address, form.Amount)
+				hash, err = eth.SendEth(ctx, senderWallet.PrivateKey, receiverWallet.Address, form.Amount)
 			default:
 				ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid chain"})
 				return
@@ -114,9 +114,9 @@ func SendToUpi() gin.HandlerFunc {
 			var hash string
 			switch strings.ToLower(form.Chain) {
 			case "trx":
-				hash, err = trx.SendTrx(senderWallet, receiverWallet.Address, form.Amount)
+				hash, err = trx.SendTrx(senderWallet.Address, senderWallet.PrivateKey, receiverWallet.Address, form.Amount)
 			case "eth":
-				hash, err = eth.SendEth(ctx, senderWallet, receiverWallet.Address, form.Amount)
+				hash, err = eth.SendEth(ctx, senderWallet.PrivateKey, receiverWallet.Address, form.Amount)
 			default:
 				ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid chain"})
 				return
@@ -164,9 +164,9 @@ func SendToAddress() gin.HandlerFunc {
 
 			switch strings.ToLower(form.Chain) {
 			case "trx":
-				hash, err = trx.SendTrx(senderWallet, form.ReceiverAddress, form.Amount)
+				hash, err = trx.SendTrx(senderWallet.Address, senderWallet.PrivateKey, form.ReceiverAddress, form.Amount)
 			case "eth":
-				hash, err = eth.SendEth(ctx, senderWallet, form.ReceiverAddress, form.Amount)
+				hash, err = eth.SendEth(ctx, senderWallet.PrivateKey, form.ReceiverAddress, form.Amount)
 			default:
 				ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid chain"})
 				return
@@ -191,9 +191,9 @@ func SendToAddress() gin.HandlerFunc {
 
 			switch strings.ToLower(form.Chain) {
 			case "trx":
-				hash, err = trx.SendTrx(senderWallet, form.ReceiverAddress, form.Amount)
+				hash, err = trx.SendTrx(senderWallet.Address, senderWallet.PrivateKey, form.ReceiverAddress, form.Amount)
 			case "eth":
-				hash, err = eth.SendEth(ctx, senderWallet, form.ReceiverAddress, form.Amount)
+				hash, err = eth.SendEth(ctx, senderWallet.PrivateKey, form.ReceiverAddress, form.Amount)
 			default:
 				ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid chain"})
 				return

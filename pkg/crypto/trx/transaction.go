@@ -6,8 +6,6 @@ import (
 	"io"
 	"net/http"
 	"strings"
-
-	"github.com/Kaushik1766/chain-upi-gin/internal/models"
 )
 
 type transaction struct {
@@ -15,11 +13,11 @@ type transaction struct {
 	Success       bool   `json:"success"`
 }
 
-func SendTrx(sender *models.Wallet, receiver string, amount float64) (string, error) {
+func SendTrx(senderAddress string, senderPrivateKey string, receiver string, amount float64) (string, error) {
 	base := "https://chain-node.azurewebsites.net"
 	// fmt.Println(base)
 	url := fmt.Sprintf("%s/api/sendTrx", base)
-	payloadData := fmt.Sprintf(`{"senderAddress":"%s","receiverAddress":"%s","privateKey":"%s","amount":%f}`, sender.Address, receiver, sender.PrivateKey, amount)
+	payloadData := fmt.Sprintf(`{"senderAddress":"%s","receiverAddress":"%s","privateKey":"%s","amount":%f}`, senderAddress, receiver, senderPrivateKey, amount)
 	payload := strings.NewReader(payloadData)
 	// fmt.Println(url)
 	// fmt.Println(payloadData)

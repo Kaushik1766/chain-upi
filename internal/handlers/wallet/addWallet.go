@@ -26,13 +26,14 @@ func AddWallet() gin.HandlerFunc {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid data."})
 			return
 		}
-		var wallet *models.Wallet
+		var wallet *models.Wallet = &models.Wallet{}
+		var walletAddr *string
 		var err error
 		switch strings.ToLower(form.Chain) {
 		case "trx":
-			wallet, err = trx.PrivateKeyToWallet(form.PrivateKey)
+			walletAddr, err = trx.PrivateKeyToWallet(form.PrivateKey)
 		case "eth":
-			wallet, err = eth.PrivateKeyToWallet(form.PrivateKey)
+			walletAddr, err = eth.PrivateKeyToWallet(form.PrivateKey)
 		default:
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"msg": "invalid chain",
@@ -42,7 +43,6 @@ func AddWallet() gin.HandlerFunc {
 			ctx.AbortWithError(http.StatusBadRequest, err)
 			return
 		}
-
 		uid, ok := ctx.Get("uid")
 		if !ok {
 			ctx.AbortWithStatus(http.StatusInternalServerError)
@@ -53,7 +53,9 @@ func AddWallet() gin.HandlerFunc {
 			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
-
+		wallet.Address = *walletAddr
+		wallet.Chain = form.Chain
+		wallet.PrivateKey = form.PrivateKey
 		wallet.UserUID = parsedUid
 		err = db.AddWallet(wallet)
 

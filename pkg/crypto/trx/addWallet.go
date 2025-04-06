@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/Kaushik1766/chain-upi-gin/internal/models"
 	"github.com/decred/dcrd/dcrec/secp256k1/v4"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/mr-tron/base58/base58"
@@ -48,20 +47,19 @@ func privateKeyToAdress(privateKey string) (string, error) {
 	return address, nil
 }
 
-func PrivateKeyToWallet(privateKey string) (*models.Wallet, error) {
-	var wallet models.Wallet
+func PrivateKeyToWallet(privateKey string) (*string, error) {
 	address, err := privateKeyToAdress(privateKey)
 	if err != nil {
 		return nil, err
 	}
-	wallet.Address = address
-	wallet.Chain = "trx"
-	wallet.PrivateKey = privateKey
-	ok := ValidateAddress(wallet.Address)
+	// wallet.Address = address
+	// wallet.Chain = "trx"
+	// wallet.PrivateKey = privateKey
+	ok := ValidateAddress(address)
 	if !ok {
 		return nil, fmt.Errorf("INVALID WALLET ADDRESS")
 	}
-	return &wallet, nil
+	return &address, nil
 }
 
 const base58Alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"

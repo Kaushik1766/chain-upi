@@ -7,7 +7,6 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/Kaushik1766/chain-upi-gin/internal/models"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -30,14 +29,14 @@ func WeiToEth(wei *big.Int) *big.Float {
 	return weiRes
 }
 
-func SendEth(ctx *gin.Context, sender *models.Wallet, receiver string, amount float64) (string, error) {
+func SendEth(ctx *gin.Context, PrivateKey string, receiver string, amount float64) (string, error) {
 	var baseUrl string = os.Getenv("INFURA_BASE_URL")
 	client, err := ethclient.Dial(baseUrl + "v3/" + os.Getenv("INFURA_API_KEY"))
 	if err != nil {
 		log.Println(err)
 		return "", err
 	}
-	privateKey, err := crypto.HexToECDSA(sender.PrivateKey)
+	privateKey, err := crypto.HexToECDSA(PrivateKey)
 	if err != nil {
 		log.Println(err)
 		return "", err
