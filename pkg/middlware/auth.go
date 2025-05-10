@@ -25,6 +25,7 @@ func Authenticate() gin.HandlerFunc {
 			return
 		}
 		ctx.Set("uid", parsedToken.UID)
+		ctx.Set("upi", parsedToken.UpiHandle)
 		ctx.Next()
 	}
 }

@@ -1,2 +1,7 @@
 /.env
-/.vscode/settings.json.vscode/settings.json
+/test/.env
+/.vscode/settings.json
+.vscode/settings.json
+tmp/build-errors.log
+*_test.go
+/tmp/test.go

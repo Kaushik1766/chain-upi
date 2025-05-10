@@ -24,7 +24,10 @@ func InitDB() error {
 	// DB.Delete(&models.Wallet{}, "1=1")
 
 	// migrate if you change models
-	// DB.AutoMigrate(&models.User{}, &models.Wallet{})
+	// DB.Migrator().DropTable(&models.User{})
+	// DB.Migrator().DropTable(&models.Wallet{})
+	// DB.AutoMigrate(&models.User{})
+	// DB.AutoMigrate(&models.Wallet{})
 	fmt.Println("Connected to db.")
 	return nil
 }
